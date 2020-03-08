@@ -8,7 +8,7 @@ Takes the id of the player whose board to show
 '''
 def gameboard(request, player_id = ""):
 
-    context = dict()
+    context = {"player_id" : player_id}
 
     return render(request, 'bingo/gameboard.html', context)
 
