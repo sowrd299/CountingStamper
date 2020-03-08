@@ -1,0 +1,7 @@
+<h1>This is where you log in!</h1>
+<form action="./do_login/" method="POST">
+    {% csrf_token %}
+    <label for="player_id">Please input your Player ID;<br/>If you are just joining this game, feel free to make one up:</label><br/>
+    <input type="text" name="player_id"/> <br/>
+    <input type="submit" value="Log In!"/>
+</form>
