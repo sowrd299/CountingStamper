@@ -1,4 +1,4 @@
-from .models import Cell
+from .models import Guess, Cell
 
 '''
 This file contains functions that implement game logic 
@@ -20,8 +20,11 @@ Returns if the player guessed correctly
 '''
 def guess_answer(board, question_answered):
 
+    guess = Guess(board = board, question = board.current_question, answer = question_answered)
+    guess.save()
+
     # IF THE PLAYER ANSWERED CORRECTLY
-    if question_answered == board.current_question.question:
+    if guess.get_is_correct():
         for cell in Cell.objects.filter(board = board, question = question_answered):
             # stamp all the relevant cells
             cell.is_stamped = True

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import json
 
-from .models import Question, Player, Queue, Board, Cell
+from .models import Question, Player, Queue, Board, Cell, Guess
 from .generation import generate_questions, generate_board
 from .game import guess_answer, guess_not_on_board
 
@@ -31,9 +31,10 @@ def gameboard(request, board=None):
         row = []
         for j in range(5):
             cell = Cell.objects.get(board = board, x = i, y = j)
+            wrong = Guess.objects.filter(board = board, question = board.current_question, answer = cell.question).count() > 0
             row.append({
                 "value" : cell.question.answer, # "{0},{1}".format(i,j),
-                "stamp" : "HAVE" if cell.get_is_stamped() else "NONE"
+                "stamp" : "HAVE" if cell.get_is_stamped() else ("WRONG" if wrong else "NONE")
             })
 
         cells.append(row)

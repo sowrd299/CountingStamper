@@ -50,6 +50,7 @@ class ValueStamp extends Stamp{
 
 let STAMP_HAVE = new Stamp("HAVE", "#FF0000");
 let STAMP_NONE = new Stamp("NONE", "#00000000");
+let STAMP_WRONG = new Stamp("WRONG", "#00000050")
 let STAMP_ANSWER = null;
 
 /**
@@ -140,8 +141,10 @@ function board_onclick(event, canvas, input, cells){
     var rect = canvas.getBoundingClientRect();
     var x = screen_to_grid(event.clientX - rect.left, canvas.width);
     var y = screen_to_grid(event.clientY - rect.top, canvas.height);
-    // update the cell data
-    input.value = cells[x][y].value;
+    // update the cell data, unless there is already a stamp there
+    if(cells[x][y].stamp == STAMP_NONE.id){
+        input.value = cells[x][y].value;
+    }
 }
 
 
@@ -156,10 +159,10 @@ function setup_board(canvas, input, cells){
     canvas.onclick = function(canvas, input, cells){
         return function(event){
             board_onclick(event, canvas, input, cells);
-            render_board(canvas, input, cells, [STAMP_HAVE, STAMP_ANSWER]);
+            render_board(canvas, input, cells, [STAMP_HAVE, STAMP_WRONG, STAMP_ANSWER]);
         };
     }(canvas, input, cells);
 
     // initial render
-    render_board(canvas, input, cells, [STAMP_HAVE]);
+    render_board(canvas, input, cells, [STAMP_HAVE, STAMP_WRONG]);
 }

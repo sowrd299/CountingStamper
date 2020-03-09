@@ -90,3 +90,21 @@ class Cell(models.Model):
 
     def __str__(self):
         return "{0} ({1},{2})".format(self.board, self.x, self.y)
+
+
+'''
+Represents a guess at the answer to a question made by a player
+Takes the board it was guessed on, the current question at the time of the guess,
+    and the answer guessed
+'''
+class Guess(models.Model):
+
+    board = models.ForeignKey('Board', on_delete=models.CASCADE)
+    question = models.ForeignKey('QuestionInQueue', on_delete=models.CASCADE)
+    answer = models.ForeignKey('Question', on_delete=models.CASCADE)
+
+    def get_is_correct(self):
+        return self.answer == self.question.question
+
+    def __str__(self):
+        return "{0} ({1},{2})".format(self.board, self.question, self.anser)
