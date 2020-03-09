@@ -21,6 +21,8 @@ class Question(models.Model):
     question = models.CharField(max_length = 200)
     answer = models.CharField(max_length = 200)
 
+    assign_randomly = models.BooleanField(default = True)
+
     def __str__(self):
         return "{0}: {1}".format(self.question, self.answer)
 
