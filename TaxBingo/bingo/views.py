@@ -17,7 +17,10 @@ def gameboard(request, board=None):
     if "no_answer" in request.POST and request.POST["no_answer"]:
         guess_not_on_board(board)
     elif "answer" in request.POST:
-        guess_answer(board, Question.objects.get(answer = request.POST["answer"]))
+        try:
+            guess_answer(board, Question.objects.get(answer = request.POST["answer"]))
+        except Question.DoesNotExist as e:
+            pass # TODO: post a message about how no guess was made
 
 
     # RENDER THE BOARD
@@ -91,6 +94,14 @@ def do_login(request):
 
     # setup the session and return
     request.session['player_id'] = player_id
+    return index(request)
+
+
+'''
+Logs out the current player
+'''
+def do_logout(request):
+    request.session.flush()
     return index(request)
 
 

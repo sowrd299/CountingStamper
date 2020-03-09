@@ -11,7 +11,7 @@ This file contains methods useful for setting up the game
 '''
 Creates a brand new queue of questions
 '''
-def generate_questions(game_id, init_length = 100):
+def generate_questions(game_id, init_length = 60):
 
     queue = Queue(id = game_id)
     queue.save()
@@ -59,7 +59,7 @@ def generate_board(player, queue, rows = 5, cols = 5, free_id = "FREE"):
 
             # ADD NORMAL SPACES
             else:
-                question = Question.objects.get(answer = "A{0}".format(random.randrange(100))) # TODO: this is a placeholder question
+                question = Question.objects.get(answer = "A{0}".format(random.randrange(60))) # TODO: this is a placeholder question
 
             cell = Cell(board = board, x = i, y = j, question = question, is_stamped = is_stamped)
             cell.save()
