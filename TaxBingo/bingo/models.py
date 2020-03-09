@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 
@@ -29,10 +30,16 @@ class Question(models.Model):
 
 '''
 Represents a list of questions for the players to go through
+Those questions can be tied to specific times,
+    at even wait intervals from a specific start time
 '''
 class Queue(models.Model):
 
     id = models.CharField(primary_key=True, max_length=200)
+
+    # the timer
+    start_time = models.DateTimeField(default = datetime.datetime(1970,1,1))
+    wait_per_question = models.DurationField(default = datetime.timedelta(hours = 12))
 
     def get_first_question(self):
         return QuestionInQueue.objects.get(queue = self, index = 0)
@@ -50,6 +57,12 @@ class QuestionInQueue(models.Model):
 
     queue = models.ForeignKey('Queue', on_delete=models.CASCADE)
     index = models.IntegerField()
+
+    '''
+    Returns the amount of time left on the question's timer
+    '''
+    def get_time_remaining(self):
+        return self.queue.start_time + self.queue.wait_per_question * self.index - datetime.datetime.now()
 
     '''
     Returns the question at the next index
