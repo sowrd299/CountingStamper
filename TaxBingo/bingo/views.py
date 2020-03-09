@@ -10,7 +10,7 @@ from .generation import generate_board
 Renders the bingo gameboard
 Takes the id of the player whose board to show
 '''
-def gameboard(request, player=None, board=None):
+def gameboard(request, board=None):
 
     # get all the board data for the website
     # TODO: maybe put this in model?
@@ -31,8 +31,8 @@ def gameboard(request, player=None, board=None):
 
     # setup the context and render it
     context = {
-        "player_id" : player.id,
-        "prompt" : "Some Kind of Tax!",
+        "player_id" : board.player.id,
+        "prompt" : board.current_question.question.question,
         "cell_data" : json.dumps({"cells" : cells})
     }
 
@@ -79,7 +79,7 @@ def index(request):
     if 'player_id' in request.session:
         try:
             player = Player.objects.get(id = request.session['player_id'])
-            return gameboard(request, player, Board.objects.get(player = player))
+            return gameboard(request, Board.objects.get(player = player))
         except (Player.DoesNotExist, Board.DoesNotExist) as e:
             # if something goes wrong with login, just make them log in again
             return login(request)

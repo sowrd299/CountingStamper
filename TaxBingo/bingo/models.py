@@ -28,12 +28,40 @@ class Question(models.Model):
 
 
 '''
+Represents a list of questions for the players to go through
+'''
+class Queue(models.Model):
+
+    def __str__(self):
+        return "Queue {0}".format(self.id)
+
+
+'''
+Represents the position of a question in a queue of questions
+'''
+class QuestionInQueue(models.Model):
+
+    question = models.ForeignKey('Question', on_delete=models.CASCADE)
+
+    queue = models.ForeignKey('Queue', on_delete=models.CASCADE)
+    index = models.IntegerField()
+
+    def get_next_question(self):
+        return QuestionInQueue.objects.get(queue = self.queue, index = self.index + 1)
+
+    def __str__(self):
+        return "{0} ({1}, {2})".format(self.queue, self.index, self.question)
+
+
+'''
 Represents a bingo boards of a single user
+Also represents the player's larger state in that same game
 Allows a player to hypothetically have multiple boards
 '''
 class Board(models.Model):
 
     player = models.ForeignKey('Player', on_delete=models.CASCADE)
+    current_question = models.ForeignKey('QuestionInQueue', on_delete=models.CASCADE)
 
     def __str__(self):
         return "{0}'s Game Board".format(self.player)
