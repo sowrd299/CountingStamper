@@ -4,6 +4,11 @@ from .models import Queue, Board, Cell, Question, QuestionInQueue
 
 
 '''
+This file contains methods useful for setting up the game
+'''
+
+
+'''
 Creates a brand new queue of questions
 '''
 def generate_questions(game_id, init_length = 100):

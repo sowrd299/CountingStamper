@@ -1,16 +1,26 @@
 from django.shortcuts import render
 import json
 
-from .models import Player, Queue, Board, Cell
+from .models import Question, Player, Queue, Board, Cell
 from .generation import generate_questions, generate_board
+from .game import guess_answer, guess_not_on_board
 
-# Create your views here.
 
 '''
 Renders the bingo gameboard
 Takes the id of the player whose board to show
 '''
 def gameboard(request, board=None):
+
+    # HANDLE ANY INCOMING ANSWERS
+
+    if "no_answer" in request.POST and request.POST["no_answer"]:
+        guess_not_on_board(board)
+    elif "answer" in request.POST:
+        guess_answer(board, Question.objects.get(answer = request.POST["answer"]))
+
+
+    # RENDER THE BOARD
 
     # get all the board data for the website
     # TODO: maybe put this in model?
