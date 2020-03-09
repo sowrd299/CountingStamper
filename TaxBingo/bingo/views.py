@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import json
 
 # Create your views here.
 
@@ -8,7 +9,26 @@ Takes the id of the player whose board to show
 '''
 def gameboard(request, player_id = ""):
 
-    context = {"player_id" : player_id}
+    # TESTING CELLS
+    cells = []
+
+    for i in range(5):
+
+        row = []
+        for j in range(5):
+            row.append({
+                "value" : "{0},{1}".format(i,j),
+                "stamp" : "NONE"
+            })
+
+        cells.append(row)
+    # / TESTING CELLS
+
+    context = {
+        "player_id" : player_id,
+        "prompt" : "Some Kind of Tax!",
+        "cell_data" : json.dumps({"cells" : cells})
+    }
 
     return render(request, 'bingo/gameboard.html', context)
 

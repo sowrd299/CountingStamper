@@ -111,8 +111,14 @@ function render_board(canvas, input, cells, stamps){
     ctx.stroke();
 
     // render the cells and stamps
+    var margin = 10;
     for(var i = 0; i < cells.length; i++){ // for each column
         for(var j = 0; j < cells[i].length; j++){ // for each cell in that column
+            // text
+            ctx.font = "24px Arial";
+            ctx.fillStyle = "#000";
+            ctx.fillText(cells[i][j].value, xs[i] + margin, ys[j+1] - margin);
+            // stamps
             for(var k = 0; k < stamps.length; k++){
                 if(stamps[k].should_stamp(cells[i][j])){
                     stamps[k].render(canvas, xs[i], ys[j], xs[i+1], ys[j+1]);
@@ -142,20 +148,7 @@ function board_onclick(event, canvas, input, cells){
 /**
  * sets up a canvas and input node to represent a bingo board
  */
-function setup_board(canvas, input){
-
-    // create testing cells
-    var cells = [];
-    for(var i = 0; i < 5; i++){
-        var row = [];
-        for(var j = 0; j < 5; j++){
-            row.push({
-                value : i+","+j,
-                stamp : STAMP_NONE.id
-            })
-        }
-        cells.push(row);
-    }
+function setup_board(canvas, input, cells){
 
     STAMP_ANSWER = new ValueStamp(input, "#0000FF50")
 

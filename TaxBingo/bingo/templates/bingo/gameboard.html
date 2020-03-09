@@ -14,5 +14,6 @@
 </form>
 
 <script>
-    setup_board(document.getElementById("bingo_board"), document.getElementById("bingo_answer"))
+    var cell_data = {{ cell_data|safe }}; // this is fine, it's django
+    setup_board(document.getElementById("bingo_board"), document.getElementById("bingo_answer"), cell_data.cells);
 </script>
