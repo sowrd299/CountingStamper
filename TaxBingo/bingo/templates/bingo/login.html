@@ -1,5 +1,5 @@
 <h1>This is where you log in!</h1>
-<form action="./do_login/" method="POST">
+<form action="{% url 'bingo:do_login' %}" method="POST">
     {% csrf_token %}
 
     <!-- game id -->

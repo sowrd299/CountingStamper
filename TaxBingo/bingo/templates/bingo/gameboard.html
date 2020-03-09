@@ -4,6 +4,8 @@
 
 <h1>This is where {{ player_id }} plays TAX TRIVIA BINGO!</h1>
 
+<a href="{% url 'bingo:do_logout' %}">Log Out</a>
+
 <div class="score_board">
     <h3>{{ player_id }}'s Score:</h3>
     <h2>{{ score }}</h2>
@@ -14,7 +16,7 @@
 <canvas id="bingo_board" width="600" height="400"></canvas>
 <p>Click on the Bingo square you think matches the clue.</p>
 
-<form action="." method="POST">
+<form action="{% url 'bingo:index' %}" method="POST">
     {% csrf_token %}
 
     <!-- no answer -->
