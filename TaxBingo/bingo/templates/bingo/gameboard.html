@@ -3,13 +3,22 @@
 <script src="{% static '/bingo/gameboard.js' %}"></script>
 
 <h1>This is where {{ player_id }} plays the game!</h1>
+
 <h2>Your next square is: {{ prompt }}</h2>
+
 <canvas id="bingo_board" width="600" height="400"></canvas>
 <p>Click on the Bingo square you think matches the clue.</p>
-<form action="." mode="POST">
+
+<form action="." method="POST">
+    {% csrf_token %}
+
+    <!-- no answer -->
     <input type="checkbox" name="no_answer"/>
     <label for="no_answer">I do not believe any squares on my board match. I am ready to move to my next clue.</label> <br/>
+
+    <!-- the answer -->
     <input type="hidden" name="answer" value="" id="bingo_answer"/> <br/>
+
     <input type="submit" value="Answer!"/>
 </form>
 

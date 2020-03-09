@@ -32,8 +32,13 @@ Represents a list of questions for the players to go through
 '''
 class Queue(models.Model):
 
+    id = models.CharField(primary_key=True, max_length=200)
+
+    def get_first_question(self):
+        return QuestionInQueue.objects.get(queue = self, index = 0)
+
     def __str__(self):
-        return "Queue {0}".format(self.id)
+        return self.id#"Queue {0}".format(self.id)
 
 
 '''

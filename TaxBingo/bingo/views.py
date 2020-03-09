@@ -1,8 +1,8 @@
 from django.shortcuts import render
 import json
 
-from .models import Player, Board, Cell
-from .generation import generate_board
+from .models import Player, Queue, Board, Cell
+from .generation import generate_questions, generate_board
 
 # Create your views here.
 
@@ -44,7 +44,7 @@ Prompts the user to log in
 '''
 def login(request):
 
-    context = dict()
+    context = { "default_game_id" : "Larry Smith's Game" }
 
     return render(request, 'bingo/login.html', context)
 
@@ -54,6 +54,17 @@ Actually logs in the user
 '''
 def do_login(request):
 
+    # load or setup the game the user plays is
+    game_id = request.POST['game_id']
+    queue = None
+
+    try:
+        queue = Queue.objects.get(id = game_id)
+    except Queue.DoesNotExist as e:
+        if request.POST['allow_new_game']:
+            queue = generate_questions(game_id)
+
+    # load or setup the player
     player_id = request.POST['player_id']
     player = None
     
@@ -64,8 +75,9 @@ def do_login(request):
         # IF THE PLAYER DOESN'T EXIST, SET THEM UP
         player = Player(id = player_id)
         player.save()
-        generate_board(player)
+        generate_board(player, queue)
 
+    # setup the session and return
     request.session['player_id'] = player_id
     return index(request)
 
@@ -83,5 +95,6 @@ def index(request):
         except (Player.DoesNotExist, Board.DoesNotExist) as e:
             # if something goes wrong with login, just make them log in again
             return login(request)
+
     else:
         return login(request)
