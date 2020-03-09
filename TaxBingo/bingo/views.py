@@ -44,7 +44,8 @@ def gameboard(request, board=None):
     context = {
         "player_id" : board.player.id,
         "prompt" : board.current_question.question.question,
-        "cell_data" : json.dumps({"cells" : cells})
+        "cell_data" : json.dumps({"cells" : cells}),
+        "score" : board.score
     }
 
     return render(request, 'bingo/gameboard.html', context)

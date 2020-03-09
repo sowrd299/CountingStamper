@@ -51,8 +51,16 @@ class QuestionInQueue(models.Model):
     queue = models.ForeignKey('Queue', on_delete=models.CASCADE)
     index = models.IntegerField()
 
+    '''
+    Returns the question at the next index
+    Returns itself if there is none
+    '''
     def get_next_question(self):
-        return QuestionInQueue.objects.get(queue = self.queue, index = self.index + 1)
+        try:
+            return QuestionInQueue.objects.get(queue = self.queue, index = self.index + 1)
+        except QuestionInQueue.DoesNotExist:
+            # TODO: do something more robust
+            return self
 
     def __str__(self):
         return "{0} ({1}, {2})".format(self.queue, self.index, self.question)
@@ -67,6 +75,13 @@ class Board(models.Model):
 
     player = models.ForeignKey('Player', on_delete=models.CASCADE)
     current_question = models.ForeignKey('QuestionInQueue', on_delete=models.CASCADE)
+
+    # the size of the board
+    rows = models.IntegerField(default=5) # the number of rows of the board
+    cols = models.IntegerField(default=5) # the number of cols of the field
+
+    # the cashed game score value of this board
+    score = models.IntegerField(default=10)
 
     def __str__(self):
         return "{0}'s Game Board".format(self.player)

@@ -39,7 +39,7 @@ Also takes the queue of questions the board should use
 '''
 def generate_board(player, queue, rows = 5, cols = 5, free_id = "FREE"):
 
-    board = Board(player = player, current_question = queue.get_first_question())
+    board = Board(player = player, current_question = queue.get_first_question(), rows = rows, cols = cols)
     board.save()
 
     for i in range(cols):

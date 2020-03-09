@@ -2,7 +2,12 @@
 
 <script src="{% static '/bingo/gameboard.js' %}"></script>
 
-<h1>This is where {{ player_id }} plays the game!</h1>
+<h1>This is where {{ player_id }} plays TAX TRIVIA BINGO!</h1>
+
+<div class="score_board">
+    <h3>{{ player_id }}'s Score:</h3>
+    <h2>{{ score }}</h2>
+</div>
 
 <h2>Your next square is: {{ prompt }}</h2>
 

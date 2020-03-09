@@ -1,8 +1,46 @@
+from django.db.models import F
+
 from .models import Guess, Cell
 
 '''
 This file contains functions that implement game logic 
 '''
+
+    
+'''
+Re-calculates and returns the current score of the given board
+'''
+def calc_score(board):
+    score = 10 # the base score
+
+    # deduct points for wrong guesses
+    for guess in Guess.objects.filter(board = board):
+        if not guess.get_is_correct():
+            score -= 1
+
+    # score points for BINGO'S
+
+    cells = Cell.objects.filter(board = board)
+
+    # find all the potenital bingo lines
+    lines = [ cells.filter(x = i) for i in range(board.cols) ] # cols
+    lines += [ cells.filter(y = i) for i in range(board.rows) ] # rows
+    lines += [ cells.filter(x = F('y')) ] # back slash
+    lines += [ cells.filter(x = board.cols - 1 - F('y')) ] # forward slash
+
+    for line in lines:
+        if all(map(lambda x : x.get_is_stamped(), line)):
+            score += line.count() * 5 # the score per bingo; reasonably, this represent slightly less than the number of wrong guess you get per q
+
+    return score
+
+
+'''
+Calculates and cashes the score on the given board
+'''
+def set_score(board):
+    board.score = calc_score(board)
+    board.save()
 
 
 '''
@@ -20,6 +58,7 @@ Returns if the player guessed correctly
 '''
 def guess_answer(board, question_answered):
 
+    # add the guess to the record
     guess = Guess(board = board, question = board.current_question, answer = question_answered)
     guess.save()
 
@@ -32,11 +71,9 @@ def guess_answer(board, question_answered):
 
         advance_question(board)
 
-        return True
-
-    # IF THE PLAYER ANSWERED INCORRECTLY
-    else:
-        return False
+    # update the cashes score and return
+    set_score(board)
+    return guess.get_is_correct()
 
 '''
 Handles a player guessing that nothing on their board matches their question
