@@ -13,3 +13,7 @@
 .login h1{
     margin-top: 0px;
 }
+
+.login .number{
+    width: 3em;
+}

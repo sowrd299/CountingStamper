@@ -4,6 +4,7 @@
 
 {% block extra_header %}
 <link rel="stylesheet" href="{% static '/bingo/login.css' %}"/>
+<script src="{% static '/bingo/collapsible.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -18,8 +19,17 @@
         <label for="game_id">Please input the ID of the game you are playing in;<br/>
         All players in your game need to put same ID here:</label> <br/>
         <input type="text" name="game_id" value="{{ default_game_id }}"/> <br/>
-        <input type="checkbox" name="allow_new_game"/> 
+        <input type="checkbox" name="allow_new_game" onclick="toggle_collapse_id('new_game_info')"/> 
         <label for="allow_new_game">Check this box if you are trying to start a new game.</label>
+
+        <div class="login_info" id="new_game_info" style="display: none">
+            <label for="allow_new_game">(Note that if a game with this ID already exists, you will just join that game.)</label> <br/>
+            <label for="wait_hours">Time to wait for each question:</label>
+            <input class="number" type="number" name="wait_hours" value="12" min="0" size="2"/>
+            <label for="wait_hours">H</label>
+            <input class="number" type="number" name="wait_minutes" value="0" min="0" max="59" size="2"/>
+            <label for="wait_minuts">M</label>
+        </div>
 
         <br/><br/>
 

@@ -86,11 +86,14 @@ def do_login(request):
     except Queue.DoesNotExist as e:
         if 'allow_new_game' in request.POST and request.POST['allow_new_game']:
 
+            wait_time = datetime.timedelta(hours = int(request.POST['wait_hours']), minutes = int(request.POST['wait_minutes']))
+
             # all games count time from 11pm yesterday UTC
+            # TODO: set a more useful start time based on the wait time
             now = datetime.datetime.now(datetime.timezone.utc)
             start_time = datetime.datetime(now.year, now.month, now.day) - datetime.timedelta(hours = 1)
 
-            queue = generate_questions(game_id, start_time)
+            queue = generate_questions(game_id, start_time, wait_time)
 
         else:
             return index(request)
