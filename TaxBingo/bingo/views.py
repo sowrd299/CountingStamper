@@ -77,8 +77,14 @@ Actually logs in the user
 # TODO: this should probably be broken up into two functions
 def do_login(request):
 
-    # load or setup the game the user plays is
     game_id = request.POST['game_id']
+    player_id = request.POST['player_id']
+
+    # fail if either ID is empty
+    if not game_id or not player_id:
+        return index(request)
+
+    # load or setup the game the user plays is
     queue = None
 
     try:
@@ -99,7 +105,6 @@ def do_login(request):
             return index(request)
 
     # load or setup the player
-    player_id = request.POST['player_id']
     player = None
     
     try:
