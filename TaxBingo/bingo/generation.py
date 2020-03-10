@@ -11,9 +11,12 @@ This file contains methods useful for setting up the game
 '''
 Creates a brand new queue of questions
 '''
-def generate_questions(game_id, init_length = 60):
+def generate_questions(game_id, start_time = None, init_length = 60):
 
-    queue = Queue(id = game_id)
+    queue_args = {"id" : game_id}
+    if start_time != None:
+        queue_args["start_time"] = start_time
+    queue = Queue(**queue_args)
     queue.save()
 
     for i in range(init_length):

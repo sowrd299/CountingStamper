@@ -73,6 +73,7 @@ def login(request):
 '''
 Actually logs in the user
 '''
+# TODO: this should probably be broken up into two functions
 def do_login(request):
 
     # load or setup the game the user plays is
@@ -82,8 +83,16 @@ def do_login(request):
     try:
         queue = Queue.objects.get(id = game_id)
     except Queue.DoesNotExist as e:
-        if request.POST['allow_new_game']:
-            queue = generate_questions(game_id)
+        if 'allow_new_game' in request.POST and request.POST['allow_new_game']:
+
+            # all games count time from 11pm yesterday UTC
+            now = datetime.datetime.now(datetime.timezone.utc)
+            start_time = datetime.datetime(now.year, now.month, now.day) - datetime.timedelta(hours = 1)
+
+            queue = generate_questions(game_id, start_time)
+
+        else:
+            return index(request)
 
     # load or setup the player
     player_id = request.POST['player_id']
@@ -100,6 +109,7 @@ def do_login(request):
 
     # setup the session and return
     request.session['player_id'] = player_id
+    request.session['game_id'] = game_id
     return index(request)
 
 
@@ -117,11 +127,12 @@ Else displayer their bingo board
 '''
 def index(request):
 
-    if 'player_id' in request.session:
+    if 'player_id' in request.session and 'game_id' in request.session:
         try:
             player = Player.objects.get(id = request.session['player_id'])
-            return gameboard(request, Board.objects.get(player = player))
-        except (Player.DoesNotExist, Board.DoesNotExist) as e:
+            game = Queue.objects.get(id = request.session['game_id'])
+            return gameboard(request, Board.objects.get(player = player, current_question__queue = game))
+        except (Player.DoesNotExist, Queue.DoesNotExist, Board.DoesNotExist) as e:
             # if something goes wrong with login, just make them log in again
             return login(request)
 
