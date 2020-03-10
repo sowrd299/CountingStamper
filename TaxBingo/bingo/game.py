@@ -6,23 +6,13 @@ from .models import Guess, Cell
 This file contains functions that implement game logic 
 '''
 
-    
+
 '''
-Re-calculates and returns the current score of the given board
+Returns the number of bingos on the given board
 '''
-def calc_score(board):
-    score = 10 # the base score
+def calc_bingos(board):
 
-    for guess in Guess.objects.filter(board = board):
-        # give points for correct guesses
-        if guess.get_is_correct():
-            score += 2
-        # deduct points for wrong guesses
-        else:
-            score -= 1
-
-    # score points for BINGO'S
-
+    r = 0
     cells = Cell.objects.filter(board = board)
 
     # find all the potenital bingo lines
@@ -33,16 +23,43 @@ def calc_score(board):
 
     for line in lines:
         if all(map(lambda x : x.get_is_stamped(), line)):
-            score += line.count() * 3 # the score per bingo; reasonably, this represent slightly less than the number of wrong guess you get per q
+            r += 1
+
+    return r
+    
+'''
+Re-calculates and returns the current score of the given board
+Takes the number of bingos found from calc_bingos, for efficiency
+'''
+def calc_score(board, bingos = None):
+
+    if bingos == None:
+        bingos = calc_bingos(board)
+
+    score = 0 # the base score
+
+    for guess in Guess.objects.filter(board = board):
+        # give points for correct guesses
+        if guess.get_is_correct():
+            score += 15
+        # deduct points for wrong guesses
+        else:
+            score -= 5
+
+    # score points for BINGO'S
+    score += bingos * 200 # the score per bingo
 
     return score
 
 
 '''
 Calculates and cashes the score on the given board
+    including the number of bingos they have
 '''
 def set_score(board):
-    board.score = calc_score(board)
+    bingos = calc_bingos(board)
+    board.bingos = bingos
+    board.score = calc_score(board, bingos)
     board.save()
 
 

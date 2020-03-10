@@ -4,8 +4,6 @@
 .score_board{
 
     position: absolute;
-    right: 3%;
-    top: 10%;
     width: 15%;
 
     border: solid #888;
@@ -29,6 +27,12 @@
     font-style: italic;
     color: #f5f517;
 }
+
+.score_board table{
+    margin: auto;
+    text-align: left;
+}
+
 
 /* the game board itself */
 .bingo_board{

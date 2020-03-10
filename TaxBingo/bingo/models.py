@@ -94,7 +94,8 @@ class Board(models.Model):
     cols = models.IntegerField(default=5) # the number of cols of the field
 
     # the cashed game score value of this board
-    score = models.IntegerField(default=10)
+    bingos = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
 
     def __str__(self):
         return "{0}'s Game Board".format(self.player)

@@ -8,10 +8,26 @@
 {% endblock %}
 
 {% block sidepanle %}
-<div class="score_board">
+
+<div class="score_board" style="left: 3%; top: 10%">
+    <h3>Bingo!'s:</h3>
+    <table>
+    {% for bingo in bingos %}
+        <tr>
+            <td><h3>{{ bingo.player.id }}:</h3></td>
+            <td><h3>{{ bingo.bingos }}</h3></td>
+        <tr/>
+    {% empty %}
+        <p><i>No one in {{ game_id }} has scored a Bingo! yet.</i><p>
+    {% endfor %}
+    </table>
+</div>
+
+<div class="score_board" style="right: 3%; top: 10%;">
     <h3>{{ player_id }}'s Score:</h3>
     <h2>{{ score }}</h2>
 </div>
+
 {% endblock %}
 
 {% block content %}

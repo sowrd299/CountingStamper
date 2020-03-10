@@ -5,7 +5,7 @@ import pytz
 
 from .models import Question, Player, Queue, Board, Cell, Guess
 from .generation import generate_questions, generate_board
-from .game import guess_answer, guess_not_on_board
+from .game import guess_answer, guess_not_on_board, set_score
 
 
 '''
@@ -55,7 +55,8 @@ def gameboard(request, board=None):
         "question_prompt" : board.current_question.question.question if question_available else "",
         "timer_prompt" : board.current_question.get_time().astimezone(pytz.timezone('US/Pacific')).strftime("%m/%d, %I:%M %p Pacific"),
         "cell_data" : json.dumps({"cells" : cells}),
-        "score" : board.score
+        "score" : board.score,
+        "bingos" : Board.objects.filter(current_question__queue = board.current_question.queue, bingos__gt = 0).order_by('-bingos')
     }
 
     return render(request, 'bingo/gameboard.html', context)
@@ -132,6 +133,23 @@ def do_logout(request):
     request.session.flush()
     return index(request)
 
+'''
+Forces all the scores of the current game to update
+'''
+def do_force_update(request):
+
+    game_id = ""
+    if 'game_id' in request.POST:
+        game_id = request.POST['game_id']
+    elif 'game_id' in request.session:
+        game_id = request.session['game_id']
+    
+    if game_id:
+        boards = Board.objects.filter(current_question__queue__id = game_id)
+        for board in boards:
+            set_score(board)
+
+    return index(request)
 
 '''
 Prompts the user to log in if they haven't yet.
