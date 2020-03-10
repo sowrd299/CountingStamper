@@ -1,0 +1,38 @@
+/* includes styles specific for playing the game */
+
+/* the board to show your current score */
+.score_board{
+
+    position: absolute;
+    right: 3%;
+    top: 10%;
+    width: 15%;
+
+    border: solid #888;
+    border-width: 8px;
+    border-radius: 4px;
+    padding: 8px;
+    background: #AAA;
+
+    text-align: center;
+    color: #000;
+
+    box-shadow: 0px 0px 16px 8px #0004;
+}
+
+.score_board h3{
+    margin: 4px;
+}
+
+.score_board h2{
+    margin: 4px;
+    font-style: italic;
+    color: #f5f517;
+}
+
+/* the game board itself */
+.bingo_board{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}

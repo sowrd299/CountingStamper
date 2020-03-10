@@ -1,3 +1,19 @@
+/**
+ * Has function, from:
+ * https://stackoverflow.com/questions/6122571/simple-non-secure-hash-function-for-javascript
+ */
+String.prototype.hashCode = function() {
+    var hash = 0;
+    if (this.length == 0) {
+        return hash;
+    }
+    for (var i = 0; i < this.length; i++) {
+        var char = this.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}
 
 // the different types of stamps
 // "stamps" are markers put on cells of the game board
@@ -13,15 +29,23 @@ class Stamp{
         return cell.stamp == this.id;
     }
 
-    render(canvas,x,y,x2,y2){
+    /**
+     * Renders the stamp on the given canvas
+     * Takes the box to render it in
+     * Takes a seed and maximum variance for "jittering" the position of the stamp
+     */
+    render(canvas,x,y,x2,y2, jitter_seed = "", jitter_max = 5){
         var w = x2-x;
         var h = y2-y;
         var ctx = canvas.getContext("2d");
         var radius = Math.min(w,h)/2;
 
+        var x_jitter = jitter_seed ? jitter_seed.hashCode() % jitter_max : 0
+        var y_jitter = jitter_seed ? (jitter_seed + "salt").hashCode() % jitter_max : 0
+
         // actually drawing the stamp
         ctx.beginPath();
-        ctx.arc(x + (w)/2, y + (h)/2, radius, 0, Math.PI * 2);
+        ctx.arc(x + (w)/2 + x_jitter, y + (h)/2 + y_jitter, radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
         ctx.fill();
     }
@@ -48,7 +72,7 @@ class ValueStamp extends Stamp{
 
 }
 
-let STAMP_HAVE = new Stamp("HAVE", "#FF0000");
+let STAMP_HAVE = new Stamp("HAVE", "#A00000E0");
 let STAMP_NONE = new Stamp("NONE", "#00000000");
 let STAMP_WRONG = new Stamp("WRONG", "#00000050")
 let STAMP_ANSWER = null;
@@ -122,7 +146,7 @@ function render_board(canvas, input, cells, stamps){
             // stamps
             for(var k = 0; k < stamps.length; k++){
                 if(stamps[k].should_stamp(cells[i][j])){
-                    stamps[k].render(canvas, xs[i], ys[j], xs[i+1], ys[j+1]);
+                    stamps[k].render(canvas, xs[i], ys[j], xs[i+1], ys[j+1], cells[i][j].value);
                 }
             }
         }

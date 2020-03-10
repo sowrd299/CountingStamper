@@ -1,15 +1,20 @@
+{% extends "./page.html"%}
+
 {% load static %}
 
+{% block extra_header %}
+<link rel="stylesheet" href="{% static '/bingo/game.css' %}"/>
 <script src="{% static '/bingo/gameboard.js' %}"></script>
+{% endblock %}
 
-<h1>This is where {{ player_id }} plays TAX TRIVIA BINGO!</h1>
-
-<a href="{% url 'bingo:do_logout' %}">Log Out</a>
-
+{% block sidepanle %}
 <div class="score_board">
     <h3>{{ player_id }}'s Score:</h3>
     <h2>{{ score }}</h2>
 </div>
+{% endblock %}
+
+{% block content %}
 
 {% if question_prompt %}
     <h2>Your next square is: {{ question_prompt }}</h2>
@@ -17,23 +22,28 @@
     <h2>Your next square will be available {{ timer_prompt }}. </h2>
 {% endif %}
 
-<canvas id="bingo_board" width="600" height="400"></canvas>
-<p>Click on the Bingo square you think matches the clue.</p>
+<canvas class="bingo_board" id="bingo_board" width="600" height="400"></canvas>
 
-<form action="{% url 'bingo:index' %}" method="POST">
-    {% csrf_token %}
+{% if question_prompt %}
+    <p>Click on the Bingo square you think matches the clue.</p>
 
-    <!-- no answer -->
-    <input type="checkbox" name="no_answer"/>
-    <label for="no_answer">I do not believe any squares on my board match. I am ready to move to my next clue.</label> <br/>
+    <form action="{% url 'bingo:index' %}" method="POST">
+        {% csrf_token %}
 
-    <!-- the answer -->
-    <input type="hidden" name="answer" value="" id="bingo_answer"/> <br/>
+        <!-- no answer -->
+        <input type="checkbox" name="no_answer"/>
+        <label for="no_answer">I do not believe any squares on my board match. I am ready to move to my next clue.</label> <br/>
 
-    <input type="submit" value="Answer!"/>
-</form>
+        <!-- the answer -->
+        <input type="hidden" name="answer" value="" id="bingo_answer"/> <br/>
+
+        <input type="submit" value="Answer!"/>
+    </form>
+{% endif %}
 
 <script>
     var cell_data = {{ cell_data|safe }}; // this is fine, it's django
     setup_board(document.getElementById("bingo_board"), document.getElementById("bingo_answer"), cell_data.cells);
 </script>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+/* this file contains styles generally useful for tax bingo */
+
+body{
+    margin: 0px;
+    background: rgb(193, 219, 223);
+}
+
+/* for the large main title of the page */
+.title{
+    color : #A00000;
+    font-size: 36pt;
+    text-align: center;
+}
+
+.largetitle{
+    font-size: 64pt;
+}
+
+.login_info{
+    background: #ddd;
+    padding: 8px 8px;
+}
+
+.login_info .player_id{
+    font-weight: bold;
+}
+
+.login_info p{
+    margin: 0%;
+}
+
+/* the area for containing most of the main elements */
+.maintext{
+    background: #f5f5f5;
+
+    margin: auto;
+    padding: 16px;
+    height: 100vh;
+    width: 50%;
+
+    box-shadow: 0px 0px 16px 8px #0004;
+}
+
+footer{
+    position: absolute;
+    bottom: 0;
+    color: #444;
+}

@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="{% static '/bingo/main.css' %}"/>
+    {% block extra_header %} {% endblock %}
+</head>
+
+<body>
+
+{% block sidepanle %} {% endblock %}
+
+<div class="maintext">
+
+    <h1 class="title">TAX CODE<br/><span class="largetitle">BINGO!</span></h1>
+
+    {% if player_id %}
+    <div class="login_info">
+        <p>
+            You are logged in as <span class="player_id">{{ player_id }}</span>.
+            <a href="{% url 'bingo:do_logout' %}">Log Out</a>
+        </p>
+    </div>
+    {% endif %}
+
+    {% block content %} {% endblock %}
+
+    <footer>
+        Original concept by Debby Ward. Created by Ryan N. Ward. &copy;2020 Ryan N. Ward
+    </footer>
+
+</div>
+
+</body>

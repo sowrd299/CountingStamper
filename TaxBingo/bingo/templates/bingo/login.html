@@ -1,18 +1,34 @@
-<h1>This is where you log in!</h1>
-<form action="{% url 'bingo:do_login' %}" method="POST">
-    {% csrf_token %}
+{% extends "./page.html"%}
 
-    <!-- game id -->
-    <label for="game_id">Please input the ID of the game you are playing in:</label> <br/>
-    <input type="text" name="game_id" value="{{ default_game_id }}"/> 
-    <input type="checkbox" name="allow_new_game"/>
-    <label for="allow_new_game">If this game doesn't exist, make it. (Normally, you shouldn't need to check this box.)</label>
+{% load static %}
 
-    <br/><br/>
+{% block extra_header %}
+<link rel="stylesheet" href="{% static '/bingo/login.css' %}"/>
+{% endblock %}
 
-    <!-- player id -->
-    <label for="player_id">Please input your Player ID;<br/>If you are just joining this game, feel free to make one up:</label><br/>
-    <input type="text" name="player_id"/><br/>
+{% block content %}
+<div class="login">
 
-    <input type="submit" value="Log In!"/>
-</form>
+    <h1>Welcome!</h1>
+
+    <form action="{% url 'bingo:do_login' %}" method="POST">
+        {% csrf_token %}
+
+        <!-- game id -->
+        <label for="game_id">Please input the ID of the game you are playing in;<br/>
+        All players in your game need to put same ID here:</label> <br/>
+        <input type="text" name="game_id" value="{{ default_game_id }}"/> <br/>
+        <input type="checkbox" name="allow_new_game"/> 
+        <label for="allow_new_game">Check this box if you are trying to start a new game.</label>
+
+        <br/><br/>
+
+        <!-- player id -->
+        <label for="player_id">Please input your Player ID;<br/>If you are just now joining this game, feel free to make one up:</label><br/>
+        <input type="text" name="player_id"/><br/>
+
+        <input type="submit" value="Log In!"/>
+    </form>
+
+</div>
+{% endblock %}
