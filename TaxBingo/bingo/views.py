@@ -51,6 +51,7 @@ def gameboard(request, board=None):
     # setup the context and render it
     context = {
         "player_id" : board.player.id,
+        "game_id" : board.current_question.queue.id,
         "question_prompt" : board.current_question.question.question if question_available else "",
         "timer_prompt" : board.current_question.get_time().astimezone(pytz.timezone('US/Pacific')).strftime("%m/%d, %I:%M %p Pacific"),
         "cell_data" : json.dumps({"cells" : cells}),
@@ -105,6 +106,9 @@ def do_login(request):
         # IF THE PLAYER DOESN'T EXIST, SET THEM UP
         player = Player(id = player_id)
         player.save()
+
+    # (must come after player and queue) setup the game board
+    if Board.objects.filter(player = player, current_question__queue = queue).count() < 1:
         generate_board(player, queue)
 
     # setup the session and return

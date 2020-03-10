@@ -39,6 +39,10 @@
 
         <input type="submit" value="Answer!"/>
     </form>
+{% else %}
+    <form>
+        <input type="hidden" name="answer" value="" id="bingo_answer"/> <!-- just a dummy for the bingo board code -->
+    </form>
 {% endif %}
 
 <script>
