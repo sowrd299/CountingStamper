@@ -59,10 +59,10 @@ class QuestionInQueue(models.Model):
     index = models.IntegerField()
 
     '''
-    Returns the amount of time left on the question's timer
+    Returns the time at which its timer will run out
     '''
-    def get_time_remaining(self):
-        return self.queue.start_time + self.queue.wait_per_question * self.index - datetime.datetime.now()
+    def get_time(self):
+        return self.queue.start_time + self.queue.wait_per_question * self.index 
 
     '''
     Returns the question at the next index

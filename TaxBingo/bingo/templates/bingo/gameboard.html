@@ -11,7 +11,11 @@
     <h2>{{ score }}</h2>
 </div>
 
-<h2>Your next square is: {{ prompt }}</h2>
+{% if question_prompt %}
+    <h2>Your next square is: {{ question_prompt }}</h2>
+{% elif timer_prompt %}
+    <h2>Your next square will be available {{ timer_prompt }}. </h2>
+{% endif %}
 
 <canvas id="bingo_board" width="600" height="400"></canvas>
 <p>Click on the Bingo square you think matches the clue.</p>

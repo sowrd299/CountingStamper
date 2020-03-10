@@ -13,9 +13,12 @@ Re-calculates and returns the current score of the given board
 def calc_score(board):
     score = 10 # the base score
 
-    # deduct points for wrong guesses
     for guess in Guess.objects.filter(board = board):
-        if not guess.get_is_correct():
+        # give points for correct guesses
+        if guess.get_is_correct():
+            score += 2
+        # deduct points for wrong guesses
+        else:
             score -= 1
 
     # score points for BINGO'S
@@ -30,7 +33,7 @@ def calc_score(board):
 
     for line in lines:
         if all(map(lambda x : x.get_is_stamped(), line)):
-            score += line.count() * 5 # the score per bingo; reasonably, this represent slightly less than the number of wrong guess you get per q
+            score += line.count() * 3 # the score per bingo; reasonably, this represent slightly less than the number of wrong guess you get per q
 
     return score
 

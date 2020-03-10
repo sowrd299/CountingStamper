@@ -1,5 +1,7 @@
 from django.shortcuts import render
 import json
+import datetime
+import pytz
 
 from .models import Question, Player, Queue, Board, Cell, Guess
 from .generation import generate_questions, generate_board
@@ -12,15 +14,18 @@ Takes the id of the player whose board to show
 '''
 def gameboard(request, board=None):
 
+    question_available = board.current_question.get_time() < datetime.datetime.now(datetime.timezone.utc)
+
     # HANDLE ANY INCOMING ANSWERS
 
-    if "no_answer" in request.POST and request.POST["no_answer"]:
-        guess_not_on_board(board)
-    elif "answer" in request.POST:
-        try:
-            guess_answer(board, Question.objects.get(answer = request.POST["answer"]))
-        except Question.DoesNotExist as e:
-            pass # TODO: post a message about how no guess was made
+    if question_available: 
+        if "no_answer" in request.POST and request.POST["no_answer"]:
+            guess_not_on_board(board)
+        elif "answer" in request.POST:
+            try:
+                guess_answer(board, Question.objects.get(answer = request.POST["answer"]))
+            except Question.DoesNotExist as e:
+                pass # TODO: post a message about how no guess was made
 
 
     # RENDER THE BOARD
@@ -34,7 +39,7 @@ def gameboard(request, board=None):
         row = []
         for j in range(5):
             cell = Cell.objects.get(board = board, x = i, y = j)
-            wrong = Guess.objects.filter(board = board, question = board.current_question, answer = cell.question).count() > 0
+            wrong = Guess.objects.filter(board = board, question = board.current_question, answer = cell.question).count()
             row.append({
                 "value" : cell.question.answer, # "{0},{1}".format(i,j),
                 "stamp" : "HAVE" if cell.get_is_stamped() else ("WRONG" if wrong else "NONE")
@@ -46,7 +51,8 @@ def gameboard(request, board=None):
     # setup the context and render it
     context = {
         "player_id" : board.player.id,
-        "prompt" : board.current_question.question.question,
+        "question_prompt" : board.current_question.question.question if question_available else "",
+        "timer_prompt" : board.current_question.get_time().astimezone(pytz.timezone('US/Pacific')).strftime("%m/%d, %I:%M %p Pacific"),
         "cell_data" : json.dumps({"cells" : cells}),
         "score" : board.score
     }
