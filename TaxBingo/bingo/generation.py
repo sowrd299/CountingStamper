@@ -9,9 +9,21 @@ This file contains methods useful for setting up the game
 
 
 '''
+Returns random records from the given querry set
+Will never return the same record twice
+By default, will shuffle the Questions marked assign_randoly from the database
+'''
+def shuffle_questions(querry = None):
+    l = list(querry if querry != None else Question.objects.filter(assign_randomly = True))
+    random.shuffle(l)
+    for q in l:
+        yield q
+
+
+'''
 Creates a brand new queue of questions
 '''
-def generate_questions(game_id, start_time = None, wait_time = None, init_length = 60):
+def generate_questions(game_id, start_time = None, wait_time = None, questions = None, init_length = 60):
 
     queue_args = {"id" : game_id}
     if start_time != None:
@@ -21,19 +33,11 @@ def generate_questions(game_id, start_time = None, wait_time = None, init_length
     queue = Queue(**queue_args)
     queue.save()
 
+    random_qs = shuffle_questions(questions)
+
     for i in range(init_length):
 
-        # GENERATES TESTING QUESTIONS
-        answer = "A{0}".format(i)
-        question = None
-
-        try:
-            question = Question.objects.get(answer=answer)
-        except Question.DoesNotExist as e:
-            question = Question( question = "Tax-related topic #{0}".format(i),  answer=answer)
-            question.save()
-
-        q_in_q = QuestionInQueue( question = question, queue = queue, index = i)
+        q_in_q = QuestionInQueue( question = next(random_qs), queue = queue, index = i )
         q_in_q.save()
 
     return queue
@@ -42,10 +46,12 @@ def generate_questions(game_id, start_time = None, wait_time = None, init_length
 Creates a brand new board, associated with the given player
 Also takes the queue of questions the board should use
 '''
-def generate_board(player, queue, rows = 5, cols = 5, free_id = "FREE"):
+def generate_board(player, queue, rows = 5, cols = 5, questions = None, free_id = "FREE"):
 
     board = Board(player = player, current_question = queue.get_first_question(), rows = rows, cols = cols)
     board.save()
+
+    random_qs = shuffle_questions(questions)
 
     for i in range(cols):
         for j in range(rows):
@@ -64,7 +70,7 @@ def generate_board(player, queue, rows = 5, cols = 5, free_id = "FREE"):
 
             # ADD NORMAL SPACES
             else:
-                question = Question.objects.get(answer = "A{0}".format(random.randrange(60))) # TODO: this is a placeholder question
+                question = next(random_qs)
 
             cell = Cell(board = board, x = i, y = j, question = question, is_stamped = is_stamped)
             cell.save()

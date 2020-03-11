@@ -78,10 +78,10 @@ Actually logs in the user
 # TODO: this should probably be broken up into two functions
 def do_login(request):
 
-    game_id = request.POST['game_id']
-    player_id = request.POST['player_id']
+    game_id = request.POST.get('game_id', None)
+    player_id = request.POST.get('player_id', None)
 
-    # fail if either ID is empty
+    # fail if either ID is empty or missing
     if not game_id or not player_id:
         return index(request)
 
