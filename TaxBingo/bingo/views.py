@@ -83,7 +83,8 @@ def do_login(request):
 
     # fail if either ID is empty or missing
     if not game_id or not player_id:
-        return login_error(request, 'Incorrect login arguments were provided. This is probably an error with your link. You probably don\'t need to worry about this.')
+        #return login_error(request, 'Incorrect login arguments were provided. This is probably an error with your link. You probably don\'t need to worry about this.')
+        return index(request)
 
     # load or setup the game the user plays is
     queue = None
@@ -178,3 +179,18 @@ def index(request):
 
     else:
         return login(request)
+
+
+def about(request):
+
+    context = {
+        "page" : "about"
+    }
+
+    if 'player_id' in request.session:
+        context['player_id'] = request.session['player_id']
+
+    if 'game_id' in request.session:
+        context['game_id'] = request.session['game_id']
+
+    return render(request, 'bingo/about.html', context)
