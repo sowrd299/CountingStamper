@@ -1,0 +1,21 @@
+{% extends "./page.html"%}
+
+{% load static %}
+
+{% block extra_header %}
+<link rel="stylesheet" href="{% static '/bingo/login.css' %}"/>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="login">
+
+    <h1>Error!</h1>
+    <p>We enountered an error while logging you in.</p>
+    <p>{{ error_message }}</p>
+    <a href="{% url 'bingo:do_logout' %}">Back to the log in page.</a>
+
+</div>
+
+{% endblock %}

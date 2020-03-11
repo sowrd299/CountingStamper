@@ -83,7 +83,7 @@ def do_login(request):
 
     # fail if either ID is empty or missing
     if not game_id or not player_id:
-        return index(request)
+        return login_error(request, 'Incorrect login arguments were provided. This is probably an error with your link. You probably don\'t need to worry about this.')
 
     # load or setup the game the user plays is
     queue = None
@@ -103,7 +103,7 @@ def do_login(request):
             queue = generate_questions(game_id, start_time, wait_time)
 
         else:
-            return index(request)
+            return login_error(request, 'The game "{0}" does not exist, but you also did not check the box to create a new game.'.format(game_id))
 
     # load or setup the player
     player = None
@@ -124,6 +124,16 @@ def do_login(request):
     request.session['player_id'] = player_id
     request.session['game_id'] = game_id
     return index(request)
+
+
+'''
+Displays an error that occured durring login
+'''
+def login_error(request, error_message=''):
+
+    context = { 'error_message' : error_message }
+
+    return render(request, 'bingo/login_error.html', context)
 
 
 '''
@@ -164,7 +174,7 @@ def index(request):
             return gameboard(request, Board.objects.get(player = player, current_question__queue = game))
         except (Player.DoesNotExist, Queue.DoesNotExist, Board.DoesNotExist) as e:
             # if something goes wrong with login, just make them log in again
-            return login(request)
+            return login_error(request, 'You appeared logged in, but some data could not be found ({0}). Please log in again.'.format(e))
 
     else:
         return login(request)
